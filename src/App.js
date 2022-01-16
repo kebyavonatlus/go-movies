@@ -1,9 +1,10 @@
 import React from "react";
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Routes,
   Route,
-  Link
+  Link,
+  useParams
 } from "react-router-dom";
 import Movies from './components/Movies';
 import Home from './components/Home';
@@ -35,7 +36,9 @@ export default function App() {
           </div>
           <div className='col-md-10'>
             <Routes>
-              <Route path="/Movies" element={<Movies />}>
+              <Route path="/movies/:id" element={<Movie />}>
+              </Route>
+              <Route path="/movies" element={<Movies />}>
               </Route>
               <Route path="/admin" element={<Admin />}>
               </Route>
@@ -47,4 +50,10 @@ export default function App() {
       </div>
     </Router>
   );
+}
+
+function Movie() {
+  let { id } = useParams();
+
+  return <h2>Movie id {id}</h2>
 }
