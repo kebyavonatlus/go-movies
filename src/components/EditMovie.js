@@ -65,13 +65,11 @@ export default class EditMovie extends Component {
                     return response.json();
                 })
                 .then((json) => {
-                    const releaseDate = new Date(json.movie.release_date);
-
                     this.setState({
                         movie: {
                             id: id,
                             title: json.movie.title,
-                            release_date: releaseDate.toISOString().split("T")[0],
+                            release_date: new Date(json.movie.release_date).toISOString().split("T")[0],
                             runtime: json.movie.runtime,
                             mpaa_rating: json.movie.mpaa_rating,
                             rating: json.movie.rating,
@@ -94,10 +92,11 @@ export default class EditMovie extends Component {
     render() {
         let { movie, isLoaded, error } = this.state;
 
-        if (error) return <div>Error: {error.message}</div>;
-        if(!isLoaded) return <p>Loading...</p>;
-
-        return (
+        if (error) {
+            return <div>Error: {error.message}</div>
+        } else if (!isLoaded) {
+            return <p>Loading...</p>
+        } else return (
             <Fragment>
                 <h2>Add/Edit Movie</h2>
                 <hr />
