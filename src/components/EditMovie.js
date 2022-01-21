@@ -6,11 +6,6 @@ import TextArea from './form-component/TextArea';
 import Select from './form-component/Select';
 
 export default class EditMovie extends Component {
-    state = {
-        movie: {},
-        isLoaded: false,
-        error: null,
-    };
 
     constructor(props) {
         super(props);
@@ -25,11 +20,11 @@ export default class EditMovie extends Component {
                 description: "",
             },
             mpaaOptions: [
-                {id: "G", value: "G"},
-                {id: "PG", value: "PG"},
-                {id: "PG13", value: "PG13"},
-                {id: "R", value: "R"},
-                {id: "NC17", value: "NC17"},
+                { id: "G", value: "G" },
+                { id: "PG", value: "PG" },
+                { id: "PG13", value: "PG13" },
+                { id: "R", value: "R" },
+                { id: "NC17", value: "NC17" },
             ],
             isLoaded: false,
             error: null,
@@ -57,11 +52,50 @@ export default class EditMovie extends Component {
     }
 
     componentDidMount() {
+        const id = this.props.match.params.id;
+        if (id > 0) {
+            fetch("http://localhost:4001/v1/movie/" + id)
+                .then((response) => {
+                    if (response.status !== 200) {
+                        let err = Error;
+                        err.Message = "Invalid response code: " + response.status;
+                        this.setState({ error: err })
+                    }
 
+                    return response.json();
+                })
+                .then((json) => {
+                    const releaseDate = new Date(json.movie.release_date);
+
+                    this.setState({
+                        movie: {
+                            id: id,
+                            title: json.movie.title,
+                            release_date: releaseDate.toISOString().split("T")[0],
+                            runtime: json.movie.runtime,
+                            mpaa_rating: json.movie.mpaa_rating,
+                            rating: json.movie.rating,
+                            description: json.movie.description,
+                        },
+                        isLoaded: true,
+                    },
+                        (error) => {
+                            this.setState({
+                                isLoaded: true,
+                                error
+                            })
+                        })
+                })
+        } else {
+            this.setState({ isLoaded: true })
+        }
     }
 
     render() {
-        let { movie } = this.state;
+        let { movie, isLoaded, error } = this.state;
+
+        if (error) return <div>Error: {error.message}</div>;
+        if(!isLoaded) return <p>Loading...</p>;
 
         return (
             <Fragment>
@@ -85,7 +119,7 @@ export default class EditMovie extends Component {
 
                     <Input
                         title={"Release date"}
-                        type={"text"}
+                        type={"date"}
                         name={"release_date"}
                         value={movie.release_date}
                         handleChange={this.handleChange}
