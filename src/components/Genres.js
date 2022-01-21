@@ -1,15 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-export default class Movies extends Component {
+
+export default class Genres extends Component {
+
     state = {
-        movies: [],
+        genres: [],
         isLoaded: false,
         error: null,
-    };
+    }
 
     componentDidMount() {
-        fetch("http://localhost:4001/v1/movies")
+        fetch("http://localhost:4001/v1/genres")
             .then((response) => {
                 if (response.status !== 200) {
                     let err = Error;
@@ -20,8 +22,8 @@ export default class Movies extends Component {
             })
             .then((json) => {
                 this.setState({
-                    movies: json.movies,
-                    isLoaded: true
+                    genres: json.genres,
+                    isLoaded: true,
                 },
                     (error) => {
                         this.setState({
@@ -33,28 +35,30 @@ export default class Movies extends Component {
     }
 
     render() {
-        const { movies, isLoaded, error } = this.state;
+        const { genres, isLoaded, error } = this.state;
         if (error) {
             return <div>Error: {error.message}</div>
         } else if (!isLoaded) {
             return <p>Loading...</p>
         } else {
             return (
-                <div>
-                    <h2>Choose a movie</h2>
-
+                <Fragment>
+                    <h2>Genres</h2>
                     <div className="list-group">
-                        {movies.map((m) => (
+                        {genres.map((m) => (
                             <Link
                                 key={m.id}
-                                to={`/movies/${m.id}`}
-                                className="list-group-item list-group-item-action">
-                                {m.title}
+                                className="list-group-item list-group-item-action"
+                                to={{
+                                    pathname: `/genre/${m.id}`,
+                                    genreName: m.genre_name,
+                                }}>
+                                {m.genre_name}
                             </Link>
                         ))}
                     </div>
-                </div>
-            );
+                </Fragment>
+            )
         }
     }
 }
