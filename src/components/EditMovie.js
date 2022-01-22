@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom'
+import {confirmAlert} from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 import './EditMovie.css';
 import Input from './form-component/Input';
@@ -137,6 +139,21 @@ export default class EditMovie extends Component {
 
     confirmDelete = (e) => {
         console.log("would delete movie id", this.state.movie.id);
+
+        confirmAlert({
+            title: "Delete movie?",
+            message: "Are you sure?",
+            buttons: [
+                {
+                    label: "Yes",
+                    onClick: () => alert('Click yes')
+                },
+                {
+                    label: "No",
+                    onClick: () => {}
+                }
+            ]
+        })
     }
 
     render() {
