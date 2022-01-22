@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { Link } from 'react-router-dom'
 
 import './EditMovie.css';
 import Input from './form-component/Input';
@@ -70,11 +71,11 @@ export default class EditMovie extends Component {
             .then(data => {
                 if (data.error) {
                     this.setState({
-                        alert: { type: "alert-danger", message: data.error.message }
+                        alert: { type: "alert alert-danger", message: data.error.message }
                     })
                 } else {
                     this.setState({
-                        alert: { type: "alert-success", message: "Changes saved!" }
+                        alert: { type: "alert alert-success", message: "Changes saved!" }
                     })
                 }
             })
@@ -134,6 +135,10 @@ export default class EditMovie extends Component {
         }
     }
 
+    confirmDelete = (e) => {
+        console.log("would delete movie id", this.state.movie.id);
+    }
+
     render() {
         let { movie, isLoaded, error } = this.state;
 
@@ -144,7 +149,7 @@ export default class EditMovie extends Component {
         } else return (
             <Fragment>
                 <h2>Add/Edit Movie</h2>
-                <Alert  
+                <Alert
                     alertType={this.state.alert.type}
                     alertMessage={this.state.alert.message}
                 />
@@ -228,6 +233,13 @@ export default class EditMovie extends Component {
                     <hr />
 
                     <button className="btn btn-primary">Save</button>
+                    <Link to="/admin" className="btn btn-warning ms-1">Cancel</Link>
+                    {movie.id > 0 && (
+                        <a href="#!" onClick={() => this.confirmDelete()}
+                            className="btn btn-danger ms-1">
+                            Delete
+                        </a>
+                    )}
                 </form>
             </Fragment>
         )
