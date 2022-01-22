@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom'
-import {confirmAlert} from 'react-confirm-alert'
+import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
 import './EditMovie.css';
@@ -138,19 +138,31 @@ export default class EditMovie extends Component {
     }
 
     confirmDelete = (e) => {
-        console.log("would delete movie id", this.state.movie.id);
-
         confirmAlert({
             title: "Delete movie?",
             message: "Are you sure?",
             buttons: [
                 {
                     label: "Yes",
-                    onClick: () => alert('Click yes')
+                    onClick: () => {
+                        fetch("http://localhost:4001/v1/admin/deletemovie/" + this.state.movie.id, { method: "GET" })
+                            .then(response => response.json)
+                            .then(date => {
+                                if (date.error) {
+                                    this.setState({
+                                        alert: { type: "alert alter-danger", message: date.error.message }
+                                    })
+                                } else {
+                                    this.props.history.push({
+                                        pathname: "/admin",
+                                    })
+                                }
+                            })
+                    }
                 },
                 {
                     label: "No",
-                    onClick: () => {}
+                    onClick: () => { }
                 }
             ]
         })
