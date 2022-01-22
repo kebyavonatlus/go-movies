@@ -4,6 +4,7 @@ import './EditMovie.css';
 import Input from './form-component/Input';
 import TextArea from './form-component/TextArea';
 import Select from './form-component/Select';
+import Alert from './ui-components/Alert';
 
 export default class EditMovie extends Component {
 
@@ -29,6 +30,10 @@ export default class EditMovie extends Component {
             isLoaded: false,
             error: null,
             errors: [],
+            alert: {
+                type: "d-done",
+                message: ""
+            }
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -42,7 +47,7 @@ export default class EditMovie extends Component {
         let errors = [];
 
         for (const prop in this.state.movie) {
-            if(this.state.movie[prop] === "") errors.push(prop)
+            if (this.state.movie[prop] === "") errors.push(prop)
         }
 
         this.setState({
@@ -63,7 +68,15 @@ export default class EditMovie extends Component {
         fetch("http://localhost:4001/v1/admin/editmovie", requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                if (data.error) {
+                    this.setState({
+                        alert: { type: "alert-danger", message: data.error.message }
+                    })
+                } else {
+                    this.setState({
+                        alert: { type: "alert-success", message: "Changes saved!" }
+                    })
+                }
             })
     }
 
@@ -131,6 +144,10 @@ export default class EditMovie extends Component {
         } else return (
             <Fragment>
                 <h2>Add/Edit Movie</h2>
+                <Alert  
+                    alertType={this.state.alert.type}
+                    alertMessage={this.state.alert.message}
+                />
                 <hr />
                 <form onSubmit={this.handleSubmit}>
                     <input type="hidden"
@@ -142,7 +159,7 @@ export default class EditMovie extends Component {
 
                     <Input
                         title={"Title"}
-                        className={this.hasError("title") ? "is-invalid": ""}
+                        className={this.hasError("title") ? "is-invalid" : ""}
                         type={"text"}
                         name={"title"}
                         value={movie.title}
@@ -153,7 +170,7 @@ export default class EditMovie extends Component {
 
                     <Input
                         title={"Release date"}
-                        className={this.hasError("release_date") ? "is-invalid": ""}
+                        className={this.hasError("release_date") ? "is-invalid" : ""}
                         type={"date"}
                         name={"release_date"}
                         value={movie.release_date}
@@ -164,7 +181,7 @@ export default class EditMovie extends Component {
 
                     <Input
                         title={"Runtime"}
-                        className={this.hasError("runtime") ? "is-invalid": ""}
+                        className={this.hasError("runtime") ? "is-invalid" : ""}
                         type={"text"}
                         name={"runtime"}
                         value={movie.runtime}
@@ -176,7 +193,7 @@ export default class EditMovie extends Component {
                     <Select
                         title={"MPAA Rating"}
                         name={"mpaa_rating"}
-                        className={this.hasError("mpaa_rating") ? "is-invalid": ""}
+                        className={this.hasError("mpaa_rating") ? "is-invalid" : ""}
                         options={this.state.mpaaOptions}
                         value={movie.mpaa_rating}
                         handleChange={this.handleChange}
@@ -187,7 +204,7 @@ export default class EditMovie extends Component {
 
                     <Input
                         title={"Rating"}
-                        className={this.hasError("rating") ? "is-invalid": ""}
+                        className={this.hasError("rating") ? "is-invalid" : ""}
                         type={"text"}
                         name={"rating"}
                         value={movie.rating}
@@ -198,10 +215,11 @@ export default class EditMovie extends Component {
 
                     <TextArea
                         title={"Description"}
-                        className={this.hasError("description") ? "is-invalid": ""}
+                        className={this.hasError("description") ? "is-invalid" : ""}
                         id={"description"}
                         name={"description"}
                         rows={4}
+                        value={movie.description}
                         handleChange={this.handleChange}
                         errorDiv={this.hasError("description") ? "text-danger" : "d-none"}
                         errorMsg={"Please enter a description"}
@@ -211,10 +229,6 @@ export default class EditMovie extends Component {
 
                     <button className="btn btn-primary">Save</button>
                 </form>
-
-                <div className="mt-3">
-                    <pre>{JSON.stringify(this.state, null, 3)}</pre>
-                </div>
             </Fragment>
         )
     }
