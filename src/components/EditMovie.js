@@ -28,6 +28,7 @@ export default class EditMovie extends Component {
             ],
             isLoaded: false,
             error: null,
+            errors: [],
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -36,6 +37,19 @@ export default class EditMovie extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
+
+        // client side validation
+        let errors = [];
+
+        for (const prop in this.state.movie) {
+            if(this.state.movie[prop] === "") errors.push(prop)
+        }
+
+        this.setState({
+            errors: errors
+        })
+
+        if (errors.length > 0) return false;
 
         const data = new FormData(event.target);
         const payload = Object.fromEntries(data.entries());
@@ -63,6 +77,10 @@ export default class EditMovie extends Component {
                 [name]: value
             }
         }))
+    }
+
+    hasError(key) {
+        return this.state.errors.indexOf(key) !== -1;
     }
 
     componentDidMount() {
@@ -124,51 +142,69 @@ export default class EditMovie extends Component {
 
                     <Input
                         title={"Title"}
+                        className={this.hasError("title") ? "is-invalid": ""}
                         type={"text"}
                         name={"title"}
                         value={movie.title}
                         handleChange={this.handleChange}
+                        errorDiv={this.hasError("title") ? "text-danger" : "d-none"}
+                        errorMsg={"Please enter a title"}
                     />
 
                     <Input
                         title={"Release date"}
+                        className={this.hasError("release_date") ? "is-invalid": ""}
                         type={"date"}
                         name={"release_date"}
                         value={movie.release_date}
                         handleChange={this.handleChange}
+                        errorDiv={this.hasError("release_date") ? "text-danger" : "d-none"}
+                        errorMsg={"Please enter a release date"}
                     />
 
                     <Input
                         title={"Runtime"}
+                        className={this.hasError("runtime") ? "is-invalid": ""}
                         type={"text"}
                         name={"runtime"}
                         value={movie.runtime}
                         handleChange={this.handleChange}
+                        errorDiv={this.hasError("runtime") ? "text-danger" : "d-none"}
+                        errorMsg={"Please enter a runtime"}
                     />
 
                     <Select
                         title={"MPAA Rating"}
                         name={"mpaa_rating"}
+                        className={this.hasError("mpaa_rating") ? "is-invalid": ""}
                         options={this.state.mpaaOptions}
                         value={movie.mpaa_rating}
                         handleChange={this.handleChange}
                         placeholder={"Choose..."}
+                        errorDiv={this.hasError("mpaa_rating") ? "text-danger" : "d-none"}
+                        errorMsg={"Please choose a MPAA rating"}
                     />
 
                     <Input
                         title={"Rating"}
+                        className={this.hasError("rating") ? "is-invalid": ""}
                         type={"text"}
                         name={"rating"}
                         value={movie.rating}
                         handleChange={this.handleChange}
+                        errorDiv={this.hasError("rating") ? "text-danger" : "d-none"}
+                        errorMsg={"Please enter a rating"}
                     />
 
                     <TextArea
                         title={"Description"}
+                        className={this.hasError("description") ? "is-invalid": ""}
                         id={"description"}
                         name={"description"}
                         rows={4}
                         handleChange={this.handleChange}
+                        errorDiv={this.hasError("description") ? "text-danger" : "d-none"}
+                        errorMsg={"Please enter a description"}
                     />
 
                     <hr />
